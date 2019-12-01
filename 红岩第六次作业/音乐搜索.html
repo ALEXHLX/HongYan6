@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>音乐搜索</title>
+        <style>
+            .div1{
+                width: 400px;
+                margin: 0 auto;
+                position: relative;
+                top: 250px;
+            }
+            #input1{
+                height: 20px;
+                width: 300px;
+                border-radius: 3px;
+                border-color:aqua;
+            }
+            #btn{
+                height: 25px;
+                border-radius: 3px;
+                border-color: aqua;
+                color: white;
+            }
+            #ul{
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="div1">
+            <input type="text" id="input1"/>
+            <input type="button" value="search" id="btn">
+            <ul id="ul"></ul>
+        </div>
+        <script>
+            const api = 'https://music.niubishanshan.top/api/v2/music/search/';
+
+            const input1 = document.getElementById("input1");
+            const btn = document.getElementById("btn");
+            const ul = document.getElementById("ul");
+            
+            btn.addEventListener('click', () =>{
+                var req;
+                if (window.XMLHttpRequest){
+                    req = new XMLHttpRequest();
+                }else{
+                    req = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                const key = input1.value;
+                req.open('GET',api + key);
+                req.onreadystatechange = function(){
+                    if(req.readyState === 4){
+                        if(req.status >= 200 && req.status < 300 || req.status == 304){
+                            const json = JSON.parse(req.responseText);
+                            const songList = json["data"]["songList"];
+                            for(var i = 0; i < songList.length; i++){
+                              //  console.log(key, songList[i]["singer"][0]["singerName"]);
+                              let list = document.createElement('li');
+                              list.innerHTML = key + " " + songList[i]["singer"][0]["singerName"];
+                              ul.append(list);
+                            }
+                        
+                        }
+                        else{
+                            console.log("请求错误");
+                        }
+                    }
+                }
+                req.send();
+            })
+        </script>
+    </body>
+</html>

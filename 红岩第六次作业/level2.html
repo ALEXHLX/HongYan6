@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>音乐搜索</title>
+        <style>
+            .div1{
+                width: 400px;
+                margin: 0 auto;
+                position: relative;
+                top: 250px;
+            }
+            #input1{
+                height: 20px;
+                width: 300px;
+                border-radius: 3px;
+                border-color:aqua;
+            }
+            #btn{
+                height: 25px;
+                border-radius: 3px;
+                border-color: aqua;
+                color: white;
+            }
+            #ul{
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="div1">
+            <input type="text" id="input1"/>
+            <input type="button" value="search" id="btn">
+            <ul id="ul"></ul>
+        </div>
+        <script>
+            const api = 'https://music.niubishanshan.top/api/v2/music/search/';
+
+            const input = document.getElementById("input1");
+            const btn = document.getElementById("btn");
+            const ul = document.getElementById("ul");
+
+            const ajax = ({type, url, success, error} = {}) =>{
+                var req;
+                if (window.XMLHttpRequest){
+                    req = new XMLHttpRequest();
+                }else{
+                    req = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                const key = input1.value;
+                req.open(type ,api + key);
+                req.onreadystatechange = function(){
+                    if(req.readyState === 4){
+                        if(req.status >= 200 && req.status < 300 || req.status == 304){
+                            success(req);
+                        
+                        }
+                        else{
+                            error(req);
+                        }
+                    }
+                }
+                req.send();
+            }
+            
+            const key = input.value;
+            btn.addEventListener('click',() => ajax({
+                type:'GET',
+                url: api + key,
+                success(req){
+                    const json = JSON.parse(req.responseText);
+                    const songList = json["data"]["songList"];
+                    for(var i = 0; i < songList.length; i++){
+                        let list = document.createElement('li');
+                        list.innerHTML = input.value + " " + songList[i]["singer"][0]["singerName"];
+                        ul.append(list);
+                    }
+                },
+                error(req){
+                    console.log("请求错误")
+                    }
+                
+                
+                }))
+        </script>
+    </body>
+</html>
